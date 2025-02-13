@@ -132,24 +132,25 @@ app.post('/register', async (req, res) => {
 // 查询总余额接口
 app.post('/api/balance', authenticateToken, async (req, res) => {
     const  userId  = req.user.user_id;
-    console.log(userId);
-
     // 从 Accounts 表中查询用户的总余额
-    const [total_balance] = await pool.execute('SELECT * FROM Accounts WHERE user_id = ?', [userId]);
-    if (total_balance.length > 0) {
-       // 返回用户余额
-       const balance = total_balance[0].total_balance;
-       res.json({ total_balance: balance });
-    }  else if (total_balance.length == 0) {
-       return res.status(404).json({ message: '未找到用户余额信息' });
+    try {
+        const [total_balance] = await pool.execute('SELECT * FROM Accounts WHERE user_id = ?', [userId]);
+        if (total_balance.length > 0) {
+            // 返回用户余额
+            const balance = total_balance[0].total_balance;
+            const star =  total_balance[0].star;
+            return  res.json({ total_balance: balance , star : star});
+        }  else if (total_balance.length === 0) {
+            return res.status(404).json({ message: '未找到用户余额信息' });
+        }
+    } catch (err) {
+        return res.status(500).json({ message: '数据库查询失败', error: err.message });
     }
 
-    return res.status(500).json({ message: '数据库查询失败', error: err.message });
 });
 
 app.post('/api/getUserinfo', authenticateToken, async (req, res) => {
     const  userId  = req.user.user_id;
-    console.log(userId);
 
     // 从 Accounts 表中查询用户的总余额
     const [rows] = await pool.execute('SELECT * FROM Users WHERE user_id = ?', [userId]);
@@ -160,7 +161,6 @@ app.post('/api/getUserinfo', authenticateToken, async (req, res) => {
     const user = rows[0];
     res.json({
         message: 'Login successful',
-        token,
         user: {
             user_id: user.user_id,
             username: user.username,
@@ -169,6 +169,71 @@ app.post('/api/getUserinfo', authenticateToken, async (req, res) => {
     });
 
 });
+
+// 减少账户余额的接口
+app.post('/api/accounts/decrease', authenticateToken, async (req, res) => {
+    const user_id = req.user.user_id;
+    const { amount, description, payment_type } = req.body;
+
+    if (amount <= 0) {
+        return res.status(400).json({ error: '减少的金额必须大于0' });
+    }
+
+    try {
+        const transaction_type = 'expense';
+        let query = '';
+        if ( payment_type === 'money') {
+            query = 'UPDATE Accounts SET total_balance = total_balance - ? WHERE user_id = ?';
+        } else if (payment_type === 'star'){
+            query = 'UPDATE Accounts SET star = star - ? WHERE user_id = ?';
+        }
+        const [results] = await pool.execute(query, [amount, user_id]);
+        query = 'INSERT INTO Transactions (user_id, amount, transaction_type, payment_type, description) VALUES (?, ?, ?, ?, ?)';
+        const [results2] = await pool.execute(query, [user_id, amount, 'expense', payment_type, description]);
+        return  res.json({
+            message: 'decrease successful',
+        });
+    }catch (err) {
+        return res.status(500).json({ message: '数据库查询失败', error: err.message });
+    }
+
+});
+
+
+// 查询交易记录的接口
+app.post('/api/getTransactions',  authenticateToken, async (req, res) => {
+    const user_id = req.user.user_id;
+    const { transaction_type, start_date, end_date } = req.body;
+
+    try {
+        let query = 'SELECT * FROM Transactions WHERE user_id = ?';
+        const params = [user_id];
+
+        // 根据查询参数构建查询条件
+        if (transaction_type) {
+            query += ' AND transaction_type = ?';
+            params.push(transaction_type);
+        }
+        if (start_date) {
+            query += ' AND transaction_date >= ?';
+            params.push(start_date);
+        }
+        if (end_date) {
+            query += ' AND transaction_date <= ?';
+            params.push(end_date);
+        }
+
+        const [results] = await pool.execute(query, params);
+        res.json({
+            message: 'success',
+            data: results,
+        });
+    } catch (err) {
+        console.error('查询交易记录失败:', err);
+        res.status(500).json({ error: '查询交易记录失败' });
+    }
+});
+
 
 
 app.get('*', (req, res) => {

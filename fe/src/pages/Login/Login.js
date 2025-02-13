@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';  // 如果选择使用 axios
 import { useNavigate } from 'react-router-dom';
 import './index.css';
@@ -10,7 +10,12 @@ function LoginPage() {
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate(); // 用来进行页面跳转
 
-
+    useEffect(() => {
+        if (getCookie('authToken')) {
+            console.log('get authToken');
+            navigate('/info');
+        }
+    },[]);
 
     // Handle form submission
     const handleSubmit = async (event) => {
@@ -30,15 +35,15 @@ function LoginPage() {
 
         try {
             // 发送 POST 请求到后端验证用户
-            const response = await axios.post('http://121.40.193.202:3000/login', requestData);
+            const response = await axios.post('/login', requestData);
 
             console.log(response);
             if (response?.status === 200) {
                 // alert('Login successful!');
                 const data = response?.data?.user;
-                const url = `/info?user_id=${data?.user_id}&username=${data?.username}`;
-                navigate(url);
-                console.log('跳转info');
+                // const url = `/info?user_id=${data?.user_id}&username=${data?.username}`;
+
+                navigate('/info');
                 // 可以进行页面跳转，或保存 token 到本地
             } else {
                 setErrorMessage(response.data.message);

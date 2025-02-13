@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'; // 导入 useEffect
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import './index.css';
 
 // 获取指定cookie的函数
@@ -16,27 +16,24 @@ function LoginPage() {
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(location.search);
+        if (queryParams.get('email')) {
+            setEmail(queryParams.get('email'));
+        }
+        if (queryParams.get('password')) {
+            setPassword(queryParams.get('password'));
+        }
+    }, []);
 
     // 自动登录检查
     useEffect(() => {
         const checkAutoLogin = async () => {
             const authToken = getCookie('authToken');
             if (authToken) {
-                try {
-                    // 调用后端接口验证token并获取用户信息
-                    const response = await axios.post('http://121.40.193.202:3000/api/getUserinfo');
-                    console.log("post");
-                    if (response.status === 200) {
-                        const userData = response.data.user; // 根据实际响应结构调整
-                        navigate(`/info?user_id=${userData.user_id}&username=${userData.username}`);
-                    } else {
-                        // token无效时清除cookie
-                        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                    }
-                } catch (error) {
-                    console.error('自动登录失败:', error);
-                    document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
-                }
+                navigate('/info');
             }
         };
         checkAutoLogin();
@@ -49,7 +46,7 @@ function LoginPage() {
             return;
         }
         try {
-            const response = await axios.post('http://121.40.193.202:3000/login', { email, password });
+            const response = await axios.post('/login', { email, password });
             if (response?.status === 200) {
                 const userData = response.data.user;
                 navigate(`/info?user_id=${userData.user_id}&username=${userData.username}`);

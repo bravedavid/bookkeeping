@@ -38,9 +38,17 @@ body {
     border-radius: 4px;
     width: 100%;
 }
+.amount {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    width: 50%;
+}
 
 .button {
     padding: 10px 20px;
+    width: 40%;
     background-color: #3498db;
     color: white;
     font-size: 16px;
