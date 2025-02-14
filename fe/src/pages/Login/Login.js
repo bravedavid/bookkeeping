@@ -1,64 +1,62 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';  // 如果选择使用 axios
-import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import { useLocation, useNavigate } from 'react-router-dom';
 import './index.css';
 
-function LoginPage() {
-    // State to manage form input values
+// 获取指定cookie的函数
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    return parts.length === 2 ? parts.pop().split(';').shift() : null;
+};
+
+const LoginPage = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
-    const navigate = useNavigate(); // 用来进行页面跳转
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        if (getCookie('authToken')) {
-            console.log('get authToken');
-            navigate('/info');
-        }
-    },[]);
+        const queryParams = new URLSearchParams(location.search);
+        setEmail(queryParams.get('email') || '');
+        setPassword(queryParams.get('password') || '');
+    }, [location.search]);
 
-    // Handle form submission
+    // 自动登录检查
+    useEffect(() => {
+        const checkAutoLogin = async () => {
+            const authToken = getCookie('authToken');
+            if (authToken) {
+                navigate('/info');
+            }
+        };
+        checkAutoLogin();
+    }, [navigate]);
+
     const handleSubmit = async (event) => {
         event.preventDefault();
-
-        // 发送请求前，简单验证输入
         if (!email || !password) {
             setErrorMessage("Email and password are required.");
             return;
         }
-
-        // 封装请求数据
-        const requestData = {
-            email,
-            password
-        };
-
         try {
-            // 发送 POST 请求到后端验证用户
-            const response = await axios.post('/login', requestData);
-
-            console.log(response);
-            if (response?.status === 200) {
-                // alert('Login successful!');
-                const data = response?.data?.user;
-                // const url = `/info?user_id=${data?.user_id}&username=${data?.username}`;
-
+            const response = await axios.post('/api/auth/login', { email, password });
+            if (response.status === 200) {
                 navigate('/info');
-                // 可以进行页面跳转，或保存 token 到本地
             } else {
-                setErrorMessage(response.data.message);
+                setErrorMessage(response.data.message || 'Login failed');
             }
         } catch (error) {
-            alert('Login fail!');
-            console.error('Login failed:', error);
             setErrorMessage('An error occurred during login. Please try again.');
+            console.error('Login failed:', error);
         }
     };
-
 
     return (
         <div className="App">
             <h2>Login Page</h2>
+            {errorMessage && <div className="error-message">{errorMessage}</div>}
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label htmlFor="email">Email:</label>
@@ -67,7 +65,6 @@ function LoginPage() {
                         id="email"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
-                        placeholder="Enter your email"
                         required
                     />
                 </div>
@@ -78,7 +75,6 @@ function LoginPage() {
                         id="password"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
-                        placeholder="Enter your password"
                         required
                     />
                 </div>
@@ -86,6 +82,6 @@ function LoginPage() {
             </form>
         </div>
     );
-}
+};
 
 export default LoginPage;

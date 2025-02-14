@@ -1,0 +1,13 @@
+uthController.js
+|   |-- userController.js
+|   |-- transactionController.js
+|-- /middlewares
+|   |-- authMiddleware.js
+|-- /routes
+|   |-- authRoutes.js
+|   |-- userRoutes.js
+|   |-- transactionRoutes.js
+|-- /db
+|   |-- index.js
+|-- server.js
+

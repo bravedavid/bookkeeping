@@ -1,0 +1,87 @@
+.container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+h1 {
+    text-align: center;
+    color: #333;
+}
+
+.select-child {
+    margin-bottom: 20px;
+}
+
+.select-child label {
+    margin-right: 10px;
+    font-weight: bold;
+}
+
+select {
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    max-width: 200px; /* 设置最大宽度 */
+    appearance: none; /* 去掉默认的下拉箭头 */
+    background-color: #fff;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10"><polygon points="0,0 10,0 5,5" fill="%23333"/></svg>'); /* 自定义下拉箭头 */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    width: 100px;
+}
+
+.allowance-input {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.allowance-input div {
+    flex: 1;
+    margin-right: 10px;
+}
+
+.allowance-input div:last-child {
+    margin-right: 0;
+}
+
+button {
+    padding: 10px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #45a049;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 8px;
+    border-bottom: 1px solid #ddd;
+}
+
+@media (max-width: 600px) {
+    .allowance-input {
+        flex-direction: column;
+    }
+
+    .allowance-input div {
+        margin-right: 0;
+        margin-bottom: 10px;
+    }
+}

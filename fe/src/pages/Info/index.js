@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import './index.css'; // 引入CSS文件
-import axios from 'axios';  // 如果选择使用 axios
+import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -11,120 +11,91 @@ function Info() {
     const [expenseAmount, setExpenseAmount] = useState('');
     const [expenseDescription, setExpenseDescription] = useState('');
     const [expenses, setExpenses] = useState([]);
-    const location = useLocation();
-    const [user_id, setUserId] = useState();
+    const [userId, setUserId] = useState();
     const [username, setUsername] = useState();
-    const navigate = useNavigate(); // 用来进行页面跳转
-    const [income, setIncome] = useState('');
-    const [incomeDescription, setIncomeDescription] = useState('');
+    const navigate = useNavigate();
     const [showParents, setShowParents] = useState(1);
-    const [childlist, setchildlist] = useState([]);
-    const [child, setchild] = useState(0);
+    const [childList, setChildList] = useState([]);
+    const [child, setChild] = useState(0);
 
-    const getBalance = async () => {
+    const fetchUserInfo = async () => {
         try {
-            const requestData = {
-                user_id,
-            };
-            const response = await axios.post('/api/balance', requestData);
-            setRemainingBalance(response?.data?.total_balance);
-            setStar(response?.data?.star);
-        } catch (e) {
-            alert('get balance fail!');
-            navigate('');
-        }
-    }
-
-    const getInfo = async () => {
-        try {
-            // 调用后端接口验证token并获取用户信息
-            const response = await axios.post('/api/getUserinfo');
-            console.log("post");
+            const response = await axios.post('/api/user/info');
             if (response.status === 200) {
-                const userData = response.data.user; // 根据实际响应结构调整
+                const userData = response.data.user;
                 setUserId(userData.user_id);
                 setUsername(userData.username);
-                setShowParents(userData.child);
+                console.log(userData);
                 if (userData.child === 0) {
-                    const response = await axios.post('/api/getChildrens');
-                    if (response.status === 200) {
-                        console.log(response);
-                        setchildlist(response.data.children);
-                        // TODO 只处理一个小孩子的情况
-                        if (response.data.children.length === 1) {
-                            setchild(response.data.children[0]);
-                        }
-                    }
-
+                    console.log(1);
+                    navigate('/parent');
                 }
             } else {
-                // token无效时清除cookie
-                document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+                clearAuthToken();
             }
         } catch (error) {
-            console.error('自动登录失败:', error);
-            document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+            console.error('获取用户信息失败:', error);
+            clearAuthToken();
         }
-    }
+    };
 
-    const getTransactions = async () => {
-        const requestData = {
-            user_id,
-        };
+
+    const fetchBalance = async () => {
         try {
-            const response = await axios.post('/api/getTransactions', requestData);
-            // 定义一个函数来格式化日期
-            const formatDate = (isoDate) => {
-                const date = new Date(isoDate);
-                const options = {
+            const response = await axios.post('/api/user/balance');
+            setRemainingBalance(response.data.total_balance);
+            setStar(response.data.star);
+        } catch (error) {
+            alert('获取余额失败!');
+        }
+    };
+
+    const fetchTransactions = async () => {
+        try {
+            const response = await axios.post('/api/transactions', { user_id: userId });
+            const formattedTransactions = response.data.data.map(transaction => ({
+                ...transaction,
+                date: new Date(transaction.transaction_date).toLocaleString('zh-CN', {
                     year: 'numeric',
                     month: 'long',
                     day: 'numeric',
                     hour: '2-digit',
                     minute: '2-digit',
                     second: '2-digit',
-                };
-                return date.toLocaleString('zh-CN', options);
-            };
-            const formattedTransactions = response?.data?.data?.map(transaction => {
-                let amount = '';
-                if (transaction.payment_type === 'money') {
-                    amount = "¥" + transaction.amount;
-                } else if (transaction.payment_type === 'star') {
-                    amount = "⭐️" + transaction.amount;
-                } else {
-                    amount = "¥" + transaction.amount;
-                }
-                return {
-                    ...transaction, // 保留原有属性
-                    date: formatDate(transaction.transaction_date),// 添加新的 data 属性
-                    amount: amount,
-                };
-            });
-            setExpenses(formattedTransactions?.reverse());
-        } catch (e) {
-            alert(e);
+                }),
+                amount: transaction.payment_type === 'money' ? `¥${transaction.amount}` : `⭐️${transaction.amount}`,
+            }));
+            setExpenses(formattedTransactions.reverse());
+        } catch (error) {
+            alert('获取交易记录失败!');
         }
-    }
+    };
 
-    useEffect( () => {
-        getInfo();
-        getBalance();
-        getTransactions();
+    const clearAuthToken = () => {
+        document.cookie = 'authToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    };
+
+    useEffect(() => {
+        fetchUserInfo();
+        fetchBalance();
+        fetchTransactions();
     }, []);
+
     const handleAddExpense = async (type) => {
         if (!expenseAmount || !expenseDescription) {
             alert('请填写金额和描述');
             return;
         }
-        const requestData = {
-            amount:expenseAmount,
-            description: expenseDescription,
-            payment_type: type,
-        };
-        await axios.post('/api/accounts/decrease', requestData);
-        // 刷新当前页面
-        window.location.reload();
+        try {
+            await axios.post('/api/transactions/decrease', {
+                amount: expenseAmount,
+                description: expenseDescription,
+                payment_type: type,
+            });
+            window.location.reload();
+        } catch (error) {
+            alert('添加支出失败!');
+        }
     };
 
     const handleAddIncome = async (type) => {
@@ -132,30 +103,25 @@ function Info() {
             alert('请填写金额和描述');
             return;
         }
-        const requestData = {
-            amount:expenseAmount,
-            description: expenseDescription,
-            payment_type: type,
-        };
-        await axios.post('//api/accounts/increase', requestData);
-        // 刷新当前页面
-        window.location.reload();
+        try {
+            await axios.post('/api/transactions/increase', {
+                amount: expenseAmount,
+                description: expenseDescription,
+                payment_type: type,
+            });
+            window.location.reload();
+        } catch (error) {
+            alert('添加收入失败!');
+        }
     };
 
     return (
         <div className="container">
             <div className="header">
-                { showParents === 0 ? (
-                    <h1>父母版</h1>
-                    ) : (
-                        <>
-                        <h1>{username}的存钱罐</h1>
-                        <div className="balance">
-                            <h2>剩余金额: ¥{remainingBalance} 剩余星星：{star}颗</h2>
-                        </div>
-                        </>
-                    )
-                }
+                <h1>{username}的存钱罐</h1>
+                <div className="balance">
+                    <h2>金额: ¥{remainingBalance} 星星：{star}颗</h2>
+                </div>
             </div>
 
             <div className="expense-form">
@@ -173,47 +139,46 @@ function Info() {
                     value={expenseDescription}
                     onChange={(e) => setExpenseDescription(e.target.value)}
                 />
-                <button className="button" onClick={() =>handleAddExpense('money')}>
+                <button className="button" onClick={() => handleAddExpense('money')}>
                     扣钱
                 </button>
-                <button className="button" onClick={()=>handleAddExpense('star')}>
+                <button className="button" onClick={() => handleAddExpense('star')}>
                     扣星星
                 </button>
             </div>
-            {showParents === 0 ? (
+
+            {showParents === 0 && (
                 <div className="expense-form">
                     <input
                         type="number"
                         className="amount"
                         placeholder="金额"
-                        value={income}
+                        value={expenseAmount}
                         onChange={(e) => setExpenseAmount(e.target.value)}
                     />
                     <input
                         type="text"
                         className="input"
                         placeholder="描述"
-                        value={incomeDescription}
+                        value={expenseDescription}
                         onChange={(e) => setExpenseDescription(e.target.value)}
                     />
-                    <button className="button" onClick={() =>handleAddExpense('money')}>
+                    <button className="button" onClick={() => handleAddIncome('money')}>
                         加钱
                     </button>
-                    <button className="button" onClick={()=>handleAddExpense('star')}>
+                    <button className="button" onClick={() => handleAddIncome('star')}>
                         加星星
                     </button>
                 </div>
-            ) : null }
-
-
+            )}
 
             <div className="expense-list">
                 {expenses.length > 0 ? (
                     expenses.map((expense, index) => (
                         <div className="expense-item" key={index} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <span>
-                    {expense.date} {expense.description}
-                </span>
+                            <span>
+                                {expense.date} {expense.description}
+                            </span>
                             <span>{expense.amount}</span>
                         </div>
                     ))
@@ -221,7 +186,6 @@ function Info() {
                     <p>没有开支记录</p>
                 )}
             </div>
-
         </div>
     );
 }
