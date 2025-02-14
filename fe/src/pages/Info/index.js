@@ -46,7 +46,7 @@ function Info() {
             setRemainingBalance(response.data.total_balance);
             setStar(response.data.star);
         } catch (error) {
-            alert('获取余额失败!');
+            console.log('获取余额失败!');
         }
     };
 

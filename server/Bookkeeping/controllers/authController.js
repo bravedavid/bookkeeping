@@ -23,7 +23,7 @@ exports.login = async (req, res) => {
         res.cookie('authToken', token, {
             httpOnly: false,
             secure: false,
-            maxAge: 3600000
+            maxAge: 365 * 24 * 60 * 60 * 1000 // 毫秒
         });
         res.json({
             message: 'Login successful',

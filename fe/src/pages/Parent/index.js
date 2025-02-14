@@ -25,7 +25,7 @@ const Parent = () => {
         }
     };
 
-    const handleAddIncome = async (type) => {
+    const handleAddIncome = async (type, reason) => {
         if (!expenseAmount || !expenseDescription) {
             alert('请填写金额和描述');
             return;
@@ -33,7 +33,21 @@ const Parent = () => {
         try {
             await axios.post('/api/transactions/increase', {
                 amount: expenseAmount,
-                description: expenseDescription,
+                description: reason ?? expenseDescription,
+                payment_type: type,
+                child_id: selectedChild?.user_id,
+            });
+            window.location.reload();
+        } catch (error) {
+            console.log('添加收入失败!');
+        }
+    };
+
+    const handleAddIncomeDetails = async (type, reason, expenseAmount) => {
+        try {
+            await axios.post('/api/transactions/increase', {
+                amount: expenseAmount,
+                description: reason,
                 payment_type: type,
                 child_id: selectedChild?.user_id,
             });
@@ -105,7 +119,7 @@ const Parent = () => {
 
     return (
         <div className="container">
-            <h1>孩子零花钱管理后台</h1>
+            <h1>{selectedChild?.username}零花钱管理后台</h1>
             <div className="select-child">
                 <label>选择孩子: </label>
                 <select
@@ -118,7 +132,7 @@ const Parent = () => {
                 </select>
             </div>
             <div className="balance">
-                <h2>{selectedChild?.username} 金额: ¥{remainingBalance} 星星：{star}颗</h2>
+                <h2>金额: ¥{remainingBalance} 星星：{star}颗</h2>
             </div>
             <div className="expense-form">
                 <input
@@ -141,6 +155,12 @@ const Parent = () => {
                 <button className="button" onClick={() => handleAddIncome('star')}>
                     加星星
                 </button>
+            </div>
+                <button className="button" onClick={() => handleAddIncomeDetails('star', '读英语', 1)}>
+                 读英语
+                </button>
+            <div>
+
             </div>
 
             <div className="expense-list">
