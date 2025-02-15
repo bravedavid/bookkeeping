@@ -11,6 +11,8 @@ const Parent = () => {
     const [expenses, setExpenses] = useState([]);
     const [expenseAmount, setExpenseAmount] = useState('');
     const [expenseDescription, setExpenseDescription] = useState('');
+    const [expenseAmount2, setExpenseAmount2] = useState('');
+    const [expenseDescription2, setExpenseDescription2] = useState('');
     const [remainingBalance, setRemainingBalance] = useState(0);
     const [star, setStar] = useState(0);
 
@@ -40,6 +42,24 @@ const Parent = () => {
             window.location.reload();
         } catch (error) {
             console.log('添加收入失败!');
+        }
+    };
+
+    const handleAddExpense = async (type) => {
+        if (!expenseAmount2 || !expenseDescription2) {
+            alert('请填写金额和描述');
+            return;
+        }
+        try {
+            await axios.post('/api/transactions/decrease', {
+                amount: expenseAmount2,
+                description: expenseDescription2,
+                payment_type: type,
+                child_id: selectedChild?.user_id,
+            });
+            window.location.reload();
+        } catch (error) {
+            alert('添加支出失败!');
         }
     };
 
@@ -154,6 +174,28 @@ const Parent = () => {
                 </button>
                 <button className="button" onClick={() => handleAddIncome('star')}>
                     加星星
+                </button>
+            </div>
+            <div>
+                <input
+                    type="number"
+                    className="amount"
+                    placeholder="金额"
+                    value={expenseAmount2}
+                    onChange={(e) => setExpenseAmount2(e.target.value)}
+                />
+                <input
+                    type="text"
+                    className="input"
+                    placeholder="描述"
+                    value={expenseDescription2}
+                    onChange={(e) => setExpenseDescription2(e.target.value)}
+                />
+                <button className="button" onClick={() => handleAddExpense('money')}>
+                    扣钱
+                </button>
+                <button className="button" onClick={() => handleAddExpense('star')}>
+                    扣星星
                 </button>
             </div>
                 <button className="button" onClick={() => handleAddIncomeDetails('star', '读英语', 1)}>
