@@ -176,7 +176,7 @@ const Parent = () => {
                     加星星
                 </button>
             </div>
-            <div>
+            <div className="expense-form">
                 <input
                     type="number"
                     className="amount"

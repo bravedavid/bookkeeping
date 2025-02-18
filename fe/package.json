@@ -36,5 +36,6 @@
   },
   "devDependencies": {
     "react-app-rewired": "^2.2.1"
-  }
+  },
+  "repository": "git@github.com:bravedavid/bookkeeping.git"
 }
