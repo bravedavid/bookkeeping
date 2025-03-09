@@ -212,7 +212,9 @@ const Parent = () => {
                             <span>
                                 {expense.date} {expense.description}
                             </span>
-                            <span>{expense.amount}</span>
+                            <span> 
+                                {expense?.transaction_type === 'expense' ? '-' : '+'} {expense?.amount} 
+                            </span>
                         </div>
                     ))
                 ) : (

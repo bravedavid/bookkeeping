@@ -179,7 +179,9 @@ function Info() {
                             <span>
                                 {expense.date} {expense.description}
                             </span>
-                            <span>{expense.amount}</span>
+                            <span>
+                                {expense ? (expense.transaction_type === 'expense' ? `- ${expense.amount}` : `+ ${expense.amount}`) : 'N/A'}
+                            </span>
                         </div>
                     ))
                 ) : (
