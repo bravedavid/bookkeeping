@@ -41,7 +41,7 @@ exports.increaseBalance = async (req, res) => {
             query = 'UPDATE Accounts SET star = star + ? WHERE user_id = ?';
         }
         await pool.execute(query, [amount, user_id]);
-        await pool.execute('INSERT INTO Transactions (user_id, amount, transaction_type, payment_type, description) VALUES (?, ?, ?, ?, ?)', [user_id, amount, 'expense', payment_type, description]);
+        await pool.execute('INSERT INTO Transactions (user_id, amount, transaction_type, payment_type, description) VALUES (?, ?, ?, ?, ?)', [user_id, amount, 'income', payment_type, description]);
         return res.json({ message: '增加账户余额成功' });
     } catch (err) {
         return res.status(500).json({ message: '数据库查询失败', error: err.message });
