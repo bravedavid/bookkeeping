@@ -54,9 +54,12 @@ exports.getTransactions = async (req, res) => {
     if (child_id) {
         user_id = child_id;
     }
+
     try {
         let query = 'SELECT * FROM Transactions WHERE user_id = ?';
         const params = [user_id];
+
+        // 可选条件处理
         if (transaction_type) {
             query += ' AND transaction_type = ?';
             params.push(transaction_type);
@@ -69,6 +72,10 @@ exports.getTransactions = async (req, res) => {
             query += ' AND transaction_date <= ?';
             params.push(end_date);
         }
+
+        // 添加排序和限制
+        query += ' ORDER BY transaction_date DESC LIMIT 50';
+
         const [results] = await pool.execute(query, params);
         res.json({ message: '交易记录查询成功', data: results });
     } catch (err) {

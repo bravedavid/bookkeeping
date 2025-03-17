@@ -92,7 +92,7 @@ const Parent = () => {
                 }),
                 amount: transaction.payment_type === 'money' ? `¥${transaction.amount}` : `⭐️${transaction.amount}`,
             }));
-            setExpenses(formattedTransactions.reverse());
+            setExpenses(formattedTransactions);
         } catch (error) {
             console.log('获取交易记录失败!');
         }
@@ -212,8 +212,8 @@ const Parent = () => {
                             <span>
                                 {expense.date} {expense.description}
                             </span>
-                            <span> 
-                                {expense?.transaction_type === 'expense' ? '-' : '+'} {expense?.amount} 
+                            <span>
+                                {expense?.transaction_type === 'expense' ? '-' : '+'} {expense?.amount}
                             </span>
                         </div>
                     ))
