@@ -1,0 +1,208 @@
+.piggy-bank-container {
+  position: relative;
+  padding: 0.5rem 1rem;
+  overflow: hidden;
+  background: linear-gradient(135deg, #7159c1, #9b59b6);
+  border-radius: 16px;
+  margin-bottom: 0.5rem;
+}
+
+.piggy-bank {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  color: white;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+}
+
+.piggy-icon {
+  position: relative;
+  font-size: 4rem;
+  margin-bottom: 1rem;
+  transition: transform 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* 居中对齐 */
+}
+
+.avatar-container {
+  width: 100px; /* 设置宽度 */
+  height: 100px; /* 设置高度 */
+  overflow: hidden; /* 隐藏超出部分 */
+  border-radius: 50%; /* 圆形 */
+  display: flex;
+  justify-content: center; /* 水平居中 */
+  align-items: center; /* 垂直居中 */
+}
+
+.avatar {
+  width: 100%; /* 使图片宽度填满容器 */
+  height: auto; /* 保持图片比例 */
+}
+
+.piggy-icon svg {
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.happy .piggy-icon svg {
+  color: #ffd700;
+  transform: scale(1.05);
+}
+
+.worried .piggy-icon svg {
+  color: #ffb6c1;
+  transform: scale(0.95);
+}
+
+.coins {
+  position: absolute;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  gap: 0.5rem;
+}
+
+.coin {
+  font-size: 1rem;
+  color: #ffd700;
+  animation: float 2s infinite;
+}
+
+.balance-text {
+  text-align: center;
+}
+
+.balance-label {
+  font-size: 1.2rem;
+  opacity: 0.9;
+  margin-bottom: 0.5rem;
+}
+
+.balance-amount {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.currency {
+  font-size: 1.8rem;
+  margin-right: 0.3rem;
+}
+
+.balance-message {
+  font-size: 1rem;
+  opacity: 0.9;
+}
+
+.stars {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.star {
+  color: #ffd700;
+  font-size: 1.2rem;
+  animation: twinkle 1.5s infinite;
+}
+
+.cloud {
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 100px;
+}
+
+.cloud::before,
+.cloud::after {
+  content: '';
+  position: absolute;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+}
+
+.cloud-1 {
+  width: 100px;
+  height: 30px;
+  top: 20%;
+  left: -30px;
+  animation: float-cloud 20s linear infinite;
+}
+
+.cloud-1::before {
+  width: 40px;
+  height: 40px;
+  top: -20px;
+  left: 15px;
+}
+
+.cloud-1::after {
+  width: 30px;
+  height: 30px;
+  top: -15px;
+  left: 45px;
+}
+
+.cloud-2 {
+  width: 80px;
+  height: 25px;
+  top: 40%;
+  right: -20px;
+  animation: float-cloud 15s linear infinite reverse;
+}
+
+.cloud-2::before {
+  width: 35px;
+  height: 35px;
+  top: -18px;
+  left: 10px;
+}
+
+.cloud-2::after {
+  width: 25px;
+  height: 25px;
+  top: -12px;
+  left: 35px;
+}
+
+.cloud-3 {
+  width: 60px;
+  height: 20px;
+  bottom: 20%;
+  left: 40%;
+  animation: float-cloud 18s linear infinite;
+}
+
+.cloud-3::before {
+  width: 30px;
+  height: 30px;
+  top: -15px;
+  left: 8px;
+}
+
+.cloud-3::after {
+  width: 20px;
+  height: 20px;
+  top: -10px;
+  left: 30px;
+}
+
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(0.8); }
+}
+
+@keyframes float-cloud {
+  from { transform: translateX(0); }
+  to { transform: translateX(400px); }
+}

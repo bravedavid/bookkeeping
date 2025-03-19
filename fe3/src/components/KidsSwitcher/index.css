@@ -1,0 +1,132 @@
+.kids-switcher {
+  position: relative;
+}
+
+.current-kid {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 20px;
+}
+
+.kid-label {
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+.kid-name {
+  font-weight: bold;
+}
+
+.switch-btn {
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: flex;
+  align-items: center;
+  opacity: 0.8;
+  transition: opacity 0.3s;
+}
+
+.switch-btn:hover {
+  opacity: 1;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modal-content h3 {
+  margin-bottom: 1rem;
+  text-align: center;
+  color: #333;
+}
+
+.kids-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.kid-item {
+  padding: 0.8rem;
+  border: 2px solid #ddd;
+  border-radius: 8px;
+  background: white;
+  color: #666;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.kid-item.active {
+  background: #7159c1;
+  border-color: #7159c1;
+  color: white;
+}
+
+.add-kid-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin: 1rem 0;
+}
+
+.add-kid-form input {
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+}
+
+.add-kid-form button,
+.close-btn {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.add-kid-form button {
+  background: #7159c1;
+  color: white;
+}
+
+.add-kid-form button:hover {
+  background: #5f4aa3;
+}
+
+.close-btn {
+  width: 100%;
+  background: #f1f1f1;
+  color: #666;
+}
+
+.close-btn:hover {
+  background: #e5e5e5;
+}

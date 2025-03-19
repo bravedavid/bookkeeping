@@ -65,7 +65,7 @@ function Info() {
                 }),
                 amount: transaction.payment_type === 'money' ? `¥${transaction.amount}` : `⭐️${transaction.amount}`,
             }));
-            setExpenses(formattedTransactions.reverse());
+            setExpenses(formattedTransactions);
         } catch (error) {
             alert('获取交易记录失败!');
         }

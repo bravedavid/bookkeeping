@@ -1,0 +1,51 @@
+.history {
+  padding: 1rem;
+}
+
+.history h2 {
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.date-group {
+  margin-bottom: 1.5rem;
+}
+
+.date-header {
+  background: #f5f6fa;
+  padding: 0.5rem 1rem;
+  color: #666;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+}
+
+.history-item {
+  background: white;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 0.5rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.history-item .transaction-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.transaction-title {
+  color: #333;
+  font-weight: 500;
+}
+
+.history-item.income .transaction-amount {
+  color: #2ecc71;
+  font-weight: bold;
+}
+
+.history-item.expense .transaction-amount {
+  color: #e74c3c;
+  font-weight: bold;
+}
